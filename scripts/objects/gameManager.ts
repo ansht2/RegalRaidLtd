@@ -1,7 +1,7 @@
 // GameManager.ts
 import {Keypair} from "@solana/web3.js";
 
-export default class GameManager {
+export default class GameManager { // Global game state synced across all players, should not contain player specific information
     // Properties and methods of your GameManager
     score: number = 0;
     country: { x: number; y: number } | null = null;
