@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@coral-xyz/anchor": "^0.29.0",
+    "phaser": "^3.80.1",
+    "typescript": "^5.4.3"
+  }
+}
