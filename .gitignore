@@ -7,3 +7,4 @@ phaser-template/dist
 node_modules
 phaser-template/.cache
 
+phaser-template/src/
