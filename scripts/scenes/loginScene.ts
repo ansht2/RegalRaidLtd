@@ -25,13 +25,13 @@ export default class LoginScene extends Phaser.Scene {
   }
   create(): void {
 
-    // set general styling (currently subjec to change)
+    // set general styling (currently ~ subject to change maybe)
     const textStyle = {
       fontSize: '18px',
       color: '#000', 
       padding: { x: 10, y: 5 },
       fontFamily: 'Garamond' // You can specify your desired font family here
-  };
+    };
   
 
     // Using a color from the image, such as a deep ocean blue
@@ -48,27 +48,40 @@ export default class LoginScene extends Phaser.Scene {
           padding: style.padding || { x: 10, y: 5 },
           fontFamily: style.fontFamily || 'Garamond'
       }).setOrigin(0.5, 0);
-  }
+    }
    
     //left sea icon thing
     const waterBorder = this.createNineSlice(centerX-320, centerY-55, 320, 300, 20, 20, 20, 20);
     waterBorder.setTint(0x060918);
     const waterIcon = this.add.image(centerX-320, centerY-55, 'waterIcon').setOrigin(0.5, 0.5);
     waterIcon.setScale(.35); 
+    waterIcon.setX(centerX-300); waterIcon.setAlpha(0); // (set some precons before)
+    this.tweens.add({ targets: waterIcon, x: centerX - 320, alpha:1, duration: 800, ease: 'Back', delay: 150 });
 
     //right space theme
-    
+    const spaceBorder = this.createNineSlice(centerX+320, centerY-55, 320, 300, 20, 20, 20, 20);
+    spaceBorder.setTint(0x060918);
+    const spaceIcon = this.add.image(centerX+320, centerY-55, 'spaceIcon').setOrigin(0.5, 0.5);
+    spaceIcon.setScale(.322); 
+    spaceIcon.setX(centerX+300); spaceIcon.setAlpha(0); // (same thing -- todo: probably make an anim function for generals)
+    this.tweens.add({ targets: spaceIcon, x: centerX + 320, alpha:1, duration: 800, ease: 'Back', delay: 150 });
 
-
-    //fit 
+ 
+    //fit the main one
     const logoBorder = this.createNineSlice(centerX, centerY-55, 380, 380, 20, 20, 20, 20);
     logoBorder.setTint(0xffffff);
+    logoBorder.setY(centerY-80); logoBorder.setAlpha(0); // (set some precons before)
+    this.tweens.add({ targets: logoBorder, y: centerY - 55, alpha:1, duration: 900, ease: 'Cubic', delay: 1050 }); 
+
+    //now the logo (-- change to new regal rebrand)
     const logo = this.add.image(centerX, centerY-55, 'logo').setOrigin(0.5, 0.5);
     logo.setScale(.35); // Scale the logo if needed 
+    logo.setY(centerY-80); logo.setAlpha(0); // (set some precons before)
+    this.tweens.add({ targets: logo, y: centerY - 55, alpha:1, duration: 900, ease: 'Cubic', delay: 1050 }); 
        
     
 
-
+    //large rectangle at the bottom (slight curve)
     const rectangleWidth = 1280;
     const rectangleHeight = 500;
     const rectangleX = centerX;
@@ -77,7 +90,6 @@ export default class LoginScene extends Phaser.Scene {
     rectangle.fillStyle(0x060918, 1);  
     rectangle.fillRoundedRect(rectangleX - rectangleWidth / 2, rectangleY, rectangleWidth, rectangleHeight, 20); // Rounded corners
 
-    // Labels with a color inspired by the sandy tan from the image
     this.add.text(centerX, centerY + 170, 'Username:', { ...textStyle, backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '24px', color: '#FFFFFF' }).setOrigin(0.5, 0);
     this.add.text(centerX, centerY + 270, 'Secret Key:', { ...textStyle, backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '24px', color: '#FFFFFF' }).setOrigin(0.5, 0);
 
@@ -86,6 +98,7 @@ export default class LoginScene extends Phaser.Scene {
 
     const secreteKeyID = this.createNineSlice(centerX, centerY+325, 900, 50, 20, 20, 20, 20);
     secreteKeyID.setTint(0x0a2948);
+
     // Input texts with a slight transparent background to blend with the scene
     this.walletIdInputText = this.add.text(centerX, centerY + 210, '', {...textStyle, color: '#FFFFFF', backgroundColor: 'rgba(108, 179, 185, 0.04)', padding: { x: 10, y: 5 } }).setOrigin(0.5, 0);
     this.secretKeyInputText = this.add.text(centerX, centerY + 315, '', { ...textStyle, fontSize: '8.5px',color: '#FFFFFF', backgroundColor: 'rgba(108, 179, 185, 0.04)', padding: { x: 10, y: 5 } }).setOrigin(0.5, 0);
