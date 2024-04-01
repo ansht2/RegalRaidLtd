@@ -37,6 +37,9 @@ export default class MainScene extends Phaser.Scene {
         this.load.image('buyButton', 'assets/img/icons8-buy-sign-96.png');
         this.load.image('bomb', 'assets/img/bomb2.png');
         this.load.image('pistol', 'assets/img/pistol.png');
+        this.load.image('border2', 'assets/Border/panel-border-028.png');
+        this.load.image('border3', 'assets/Border/panel-border-026.png');
+
     }
 
     create(): void {
@@ -187,7 +190,34 @@ export default class MainScene extends Phaser.Scene {
         });
         this.updateEnemyTerritoriesCounter();
     }
-
+    private createNineSlice(x: number, y: number, width: number, height: number, leftWidth: number, rightWidth: number, topHeight: number, bottomHeight: number) {
+        return this.add.nineslice(
+            x,              // x-coordinate
+            y,              // y-coordinate
+            'border2',       // texture key
+            undefined,      // frame (optional)
+            width,          // width
+            height,         // height
+            leftWidth,      // leftWidth
+            rightWidth,     // rightWidth
+            topHeight,      // topHeight
+            bottomHeight    // bottomHeight
+        );
+      }
+      private createNineSlice2(x: number, y: number, width: number, height: number, leftWidth: number, rightWidth: number, topHeight: number, bottomHeight: number) {
+        return this.add.nineslice(
+            x,              // x-coordinate
+            y,              // y-coordinate
+            'border3',       // texture key
+            undefined,      // frame (optional)
+            width,          // width
+            height,         // height
+            leftWidth,      // leftWidth
+            rightWidth,     // rightWidth
+            topHeight,      // topHeight
+            bottomHeight    // bottomHeight
+        );
+      }
     private drawGrid(): void {
         let gm = this.getGameManager();
         for (let y = 0; y < this.gridHeight; y++) {
@@ -202,6 +232,9 @@ export default class MainScene extends Phaser.Scene {
                         color,
                         0
                     ).setFillStyle(0x0000FF, 0.5);
+                    const borderFirst = this.createNineSlice(x * this.cellSize + this.cellSize / 2, y * this.cellSize + this.cellSize / 2, 
+                    this.cellSize, this.cellSize, 20, 20, 20, 20);
+                    // borderFirst.setTint(0x0000FF);
 
                 } else {
                     const cell = this.add.rectangle(
@@ -212,7 +245,7 @@ export default class MainScene extends Phaser.Scene {
                         color,
                         0
                     ).setStrokeStyle(1, 0x000000, 1);
-
+                        
                     this.setCellInteractive(cell, x, y);
                 }
             }
@@ -274,6 +307,9 @@ export default class MainScene extends Phaser.Scene {
                     gameManager.ownedTerritories.push({x, y});
                 }
                 cell.setFillStyle(0x0000FF, 0.5); // Ensure first block is immediately blue
+                const personalBox = this.createNineSlice(x * this.cellSize + this.cellSize / 2, y * this.cellSize + this.cellSize / 2, 
+                this.cellSize, this.cellSize, 20, 20, 20, 20);
+                // personalBox.setTint(0x0000FF);
                 this.updateStatusText();
             }
         });
@@ -290,8 +326,13 @@ export default class MainScene extends Phaser.Scene {
             this.cellSize,
             this.cellSize,
             0xFF0000,
-            0.5
+            0.25
         ));
+        
+        const enemyBox =this.createNineSlice2(edgeX* this.cellSize + this.cellSize / 2, edgeY * this.cellSize + this.cellSize / 2, 
+        this.cellSize, this.cellSize, 20, 20, 20, 20);
+        
+        enemyBox.setTint(0xFF0000);
     }
 
     private expandEnemies(): void {
@@ -330,8 +371,12 @@ export default class MainScene extends Phaser.Scene {
                     this.cellSize,
                     this.cellSize,
                     0xFF0000,
-                    0.5
+                    0.25
                 ));
+                
+                const enemyBox = this.createNineSlice2(newPosition.x * this.cellSize + this.cellSize / 2, newPosition.y * this.cellSize + this.cellSize / 2, 
+                this.cellSize, this.cellSize, 20, 20, 20, 20);
+                enemyBox.setTint(0xFF0000);
             }
         }
     }

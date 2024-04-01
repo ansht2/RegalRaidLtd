@@ -122,7 +122,7 @@ export default class LoginScene extends Phaser.Scene {
 
     // Input texts with a slight transparent background to blend with the scene
     this.walletIdInputText = this.add.text(centerX, centerY + 210, '', {...textStyle, color: '#ACACAC', backgroundColor: 'rgba(108, 179, 185, 0.24)', padding: { x: 10, y: 5 } }).setOrigin(0.5, 0);
-    this.secretKeyInputText = this.add.text(centerX, centerY + 315, '', { ...textStyle, fontSize: '8.5px',color: '#ACACAC', backgroundColor: 'rgba(108, 179, 185, 0.24)', padding: { x: 10, y: 5 } }).setOrigin(0.5, 0);
+    this.secretKeyInputText = this.add.text(centerX, centerY + 315, '', { ...textStyle, fontSize: '8.5px',color: '#ACACAC', backgroundColor: 'rgba(108, 179, 185, 0.224)', padding: { x: 10, y: 5 } }).setOrigin(0.5, 0);
 
     // Interactive areas to detect which field is being typed into
     this.makeInteractive(this.walletIdInputText, true);
@@ -132,7 +132,7 @@ export default class LoginScene extends Phaser.Scene {
     // this.input.keyboard!.on('paste', (event) => this.handlePaste(event));
     this.input.keyboard!.on('keydown', (event: KeyboardEvent) => this.handleKeyInput(event));
 
-    createStyledText(this, centerX+555, centerY+430, 'Regal Raid Limited ©', {color: '#FFFFFF', backgroundColor: '#0a2948'});
+    createStyledText(this, centerX+555, centerY+123, 'Regal Raid Limited ©', {color: '#000000', backgroundColor: 'rgba(108, 179, 185, 0)'});
 
     // Submit Button with a color that complements the overall theme
     

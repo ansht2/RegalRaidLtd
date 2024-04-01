@@ -2,21 +2,33 @@ import Phaser from 'phaser';
 import GameManager from "../objects/gameManager";
 import {Keypair} from "@solana/web3.js";
 import blockchainClient from "./transaction";
+import { Plugin as NineSlicePlugin } from 'phaser3-nineslice';
+
+const textStyle = {
+  fontSize: '18px',
+  color: '#000', 
+  padding: { x: 10, y: 5 },
+  fontFamily: 'Garamond' // You can specify your desired font family here
+};
 
 function createInstructionsPopup(scene) {
   let graphics = scene.add.graphics();
-  graphics.fillStyle(0xffffff, 0.8);
-  graphics.fillRect(100, 400, 600, 200);
+  // graphics.fillStyle(0xffffff, 0.8);
+  // graphics.fillRect(100, 400, 600, 200);
 
-  let instructions = "Your mission, should you choose to accept it, is to capture the most land area.\nChoose a country by clicking one of the cells.";
-  let text = scene.add.text(400, 500, instructions, { fontSize: '24px', color: '#000', align: 'center', wordWrap: { width: 580 } });
+  const waterBorder = scene.createNineSlice(400, 500, 650, 200, 20, 20, 20, 20);
+  waterBorder.setTint(0xFFFFFF);
+  let instructions = "Your mission, should you choose to accept it, is to capture the most land area.\n \nChoose a country by clicking one of the cells.";
+  let text = scene.add.text(400, 500, instructions, { ...textStyle, fontSize: '25px', color: '#000', align: 'center', wordWrap: { width: 580 } });
   text.setOrigin(0.5, 0.5);
-  let closeButton = scene.add.text(680, 400, 'X', { fontSize: '24px', color: '#ff0000' });
+  
+  let closeButton = scene.add.text(690, 410, 'x', { fontSize: '25px', color: '#ff0000' });
   closeButton.setInteractive();
   closeButton.on('pointerdown', function () {
     graphics.clear();
     text.setVisible(false);
     closeButton.setVisible(false);
+    waterBorder.setVisible(false);
     scene.instructionsRead = true;
   });
 }
@@ -67,6 +79,7 @@ export default class CountryScene extends Phaser.Scene {
 
   preload(): void {
     this.load.image('background', 'assets/img/background.png');
+    this.load.image('border1', 'assets/Panel/panel-026.png');
     // Preload assets if any
   }
 
@@ -81,7 +94,20 @@ export default class CountryScene extends Phaser.Scene {
   update(time: number, delta: number): void {
     // Update logic
   }
-
+  private createNineSlice(x: number, y: number, width: number, height: number, leftWidth: number, rightWidth: number, topHeight: number, bottomHeight: number) {
+    return this.add.nineslice(
+        x,              // x-coordinate
+        y,              // y-coordinate
+        'border1',       // texture key
+        undefined,      // frame (optional)
+        width,          // width
+        height,         // height
+        leftWidth,      // leftWidth
+        rightWidth,     // rightWidth
+        topHeight,      // topHeight
+        bottomHeight    // bottomHeight
+    );
+  }
   private drawGrid(): void {
     for (let y = 0; y < this.gridHeight; y++) {
       for (let x = 0; x < this.gridWidth; x++) {
