@@ -7,6 +7,7 @@ import ShopScene from './scenes/shopScene';
 // import LoginScene from './scenes/loginScene';
 import TransactionScene from "./scenes/transaction";
 import LoginScene from "./scenes/loginScene";
+import { Plugin as NineSlicePlugin } from 'phaser3-nineslice'
 
 const DEFAULT_WIDTH = 1280
 const DEFAULT_HEIGHT = 720
@@ -22,6 +23,10 @@ const config = {
     height: DEFAULT_HEIGHT
   },
   scene:[LoginScene, PreloadScene, CountryScene, MainScene, ShopScene],
+  
+  plugins: {
+    global: [ NineSlicePlugin.DefaultCfg ],
+  },
   physics: {
     default: 'arcade',
     arcade: {

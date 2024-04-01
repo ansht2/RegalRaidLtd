@@ -1,7 +1,8 @@
 import Phaser, {Game} from 'phaser';
 import blockchainClient from './transaction';
 import GameManager from "../objects/gameManager";
-import {use} from "matter";
+import {use} from "matter"; 
+import { Plugin as NineSlicePlugin } from 'phaser3-nineslice';
 export default class LoginScene extends Phaser.Scene {
   private walletIdInputText: Phaser.GameObjects.Text;
   private secretKeyInputText: Phaser.GameObjects.Text;
@@ -16,10 +17,14 @@ export default class LoginScene extends Phaser.Scene {
 
   preload(): void {
     // Load the logo image
-    this.load.image('logo', 'assets/img/Designer (1).png');
+    this.load.image('logo', 'assets/img/Designer (1).png'); 
+    this.load.image('border', 'assets/Transparent center/panel-transparent-center-003.png');
+    this.load.image('waterIcon', 'assets/img/waterIcon.png'); 
+    this.load.image('spaceIcon', 'assets/img/spaceIcon.png'); 
+    
   }
-
   create(): void {
+
     // set general styling (currently subjec to change)
     const textStyle = {
       fontSize: '18px',
@@ -34,7 +39,7 @@ export default class LoginScene extends Phaser.Scene {
     const centerX = this.cameras.main.width / 2;
     const centerY = this.cameras.main.height / 2 - 100; // Adjusted from -300 to -100
 
-
+    
     function createStyledText(scene, x, y, text, style) {
       return scene.add.text(x, y, text, {
           fontSize: style.fontSize || '18px',
@@ -45,11 +50,25 @@ export default class LoginScene extends Phaser.Scene {
       }).setOrigin(0.5, 0);
   }
    
-    // Add the logo image
-    const logo = this.add.image(centerX, centerY, 'logo').setOrigin(0.5, 0.5);
-    logo.setScale(0.25); // Scale the logo if needed
+    //left sea icon thing
+    const waterBorder = this.createNineSlice(centerX-320, centerY-55, 320, 300, 20, 20, 20, 20);
+    waterBorder.setTint(0x060918);
+    const waterIcon = this.add.image(centerX-320, centerY-55, 'waterIcon').setOrigin(0.5, 0.5);
+    waterIcon.setScale(.35); 
+
+    //right space theme
     
-    // Draw rectangle
+
+
+    //fit 
+    const logoBorder = this.createNineSlice(centerX, centerY-55, 380, 380, 20, 20, 20, 20);
+    logoBorder.setTint(0xffffff);
+    const logo = this.add.image(centerX, centerY-55, 'logo').setOrigin(0.5, 0.5);
+    logo.setScale(.35); // Scale the logo if needed 
+       
+    
+
+
     const rectangleWidth = 1280;
     const rectangleHeight = 500;
     const rectangleX = centerX;
@@ -62,9 +81,14 @@ export default class LoginScene extends Phaser.Scene {
     this.add.text(centerX, centerY + 170, 'Username:', { ...textStyle, backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '24px', color: '#FFFFFF' }).setOrigin(0.5, 0);
     this.add.text(centerX, centerY + 270, 'Secret Key:', { ...textStyle, backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '24px', color: '#FFFFFF' }).setOrigin(0.5, 0);
 
+    const walletID = this.createNineSlice(centerX, centerY+225, 900, 50, 20, 20, 20, 20);
+    walletID.setTint(0x0a2948);
+
+    const secreteKeyID = this.createNineSlice(centerX, centerY+325, 900, 50, 20, 20, 20, 20);
+    secreteKeyID.setTint(0x0a2948);
     // Input texts with a slight transparent background to blend with the scene
-    this.walletIdInputText = this.add.text(centerX, centerY + 210, '', {...textStyle, backgroundColor: 'rgba(255, 255, 255, 0.5)', padding: { x: 10, y: 5 } }).setOrigin(0.5, 0);
-    this.secretKeyInputText = this.add.text(centerX, centerY + 310, '', { ...textStyle, backgroundColor: 'rgba(255, 255, 255, 0.5)', padding: { x: 10, y: 5 } }).setOrigin(0.5, 0);
+    this.walletIdInputText = this.add.text(centerX, centerY + 210, '', {...textStyle, color: '#FFFFFF', backgroundColor: 'rgba(108, 179, 185, 0.04)', padding: { x: 10, y: 5 } }).setOrigin(0.5, 0);
+    this.secretKeyInputText = this.add.text(centerX, centerY + 315, '', { ...textStyle, fontSize: '8.5px',color: '#FFFFFF', backgroundColor: 'rgba(108, 179, 185, 0.04)', padding: { x: 10, y: 5 } }).setOrigin(0.5, 0);
 
     // Interactive areas to detect which field is being typed into
     this.makeInteractive(this.walletIdInputText, true);
@@ -74,7 +98,7 @@ export default class LoginScene extends Phaser.Scene {
     // this.input.keyboard!.on('paste', (event) => this.handlePaste(event));
     this.input.keyboard!.on('keydown', (event: KeyboardEvent) => this.handleKeyInput(event));
 
-    createStyledText(this, centerX+550, centerY+120, 'Regal Raid Limited (c)', {backgroundColor: '#0a2948'});
+    createStyledText(this, centerX+550, centerY+120, 'Regal Raid Limited ©', {backgroundColor: '#0a2948'});
 
     // Submit Button with a color that complements the overall theme
       
@@ -85,7 +109,7 @@ export default class LoginScene extends Phaser.Scene {
       .setInteractive()
       .on('pointerdown', () => this.submitForm());
 
-    const buttonText = this.add.text(centerX, centerY + 400, 'Submit', { ...textStyle, fontSize: '28px', color: '#FFFFFF' }).setOrigin(0.5)
+    const buttonText = this.add.text(centerX, centerY + 400, 'Login', { ...textStyle, fontSize: '28px', color: '#FFFFFF' }).setOrigin(0.5)
     .setInteractive()
     .on('pointerdown', () => this.submitForm()); 
   }
@@ -166,7 +190,20 @@ export default class LoginScene extends Phaser.Scene {
       console.warn('Please enter both wallet ID and secret key.');
     }
   }
-
+  private createNineSlice(x: number, y: number, width: number, height: number, leftWidth: number, rightWidth: number, topHeight: number, bottomHeight: number) {
+    return this.add.nineslice(
+        x,              // x-coordinate
+        y,              // y-coordinate
+        'border',       // texture key
+        undefined,      // frame (optional)
+        width,          // width
+        height,         // height
+        leftWidth,      // leftWidth
+        rightWidth,     // rightWidth
+        topHeight,      // topHeight
+        bottomHeight    // bottomHeight
+    );
+  }
   // handlePaste(event){
   //   console.log("Handling paste!")
   //   event.preventDefault();
@@ -179,4 +216,5 @@ export default class LoginScene extends Phaser.Scene {
   //     this.secretKeyInputText.setText('*'.repeat(this.secretKey.length));
   //   }
   // }
+  
 }
