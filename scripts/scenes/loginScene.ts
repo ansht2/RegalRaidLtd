@@ -20,22 +20,51 @@ export default class LoginScene extends Phaser.Scene {
   }
 
   create(): void {
+    // set general styling (currently subjec to change)
+    const textStyle = {
+      fontSize: '18px',
+      color: '#000', 
+      padding: { x: 10, y: 5 },
+      fontFamily: 'Garamond' // You can specify your desired font family here
+  };
+  
+
     // Using a color from the image, such as a deep ocean blue
     this.cameras.main.setBackgroundColor('#0a2948');
     const centerX = this.cameras.main.width / 2;
     const centerY = this.cameras.main.height / 2 - 100; // Adjusted from -300 to -100
 
+
+    function createStyledText(scene, x, y, text, style) {
+      return scene.add.text(x, y, text, {
+          fontSize: style.fontSize || '18px',
+          color: style.color || '#000',
+          backgroundColor: style.backgroundColor || 'rgba(255, 255, 255, 1)',
+          padding: style.padding || { x: 10, y: 5 },
+          fontFamily: style.fontFamily || 'Garamond'
+      }).setOrigin(0.5, 0);
+  }
+   
     // Add the logo image
     const logo = this.add.image(centerX, centerY, 'logo').setOrigin(0.5, 0.5);
     logo.setScale(0.25); // Scale the logo if needed
+    
+    // Draw rectangle
+    const rectangleWidth = 1280;
+    const rectangleHeight = 500;
+    const rectangleX = centerX;
+    const rectangleY = centerY + 150;  
+    const rectangle = this.add.graphics();
+    rectangle.fillStyle(0x060918, 1);  
+    rectangle.fillRoundedRect(rectangleX - rectangleWidth / 2, rectangleY, rectangleWidth, rectangleHeight, 20); // Rounded corners
 
     // Labels with a color inspired by the sandy tan from the image
-    this.add.text(centerX, centerY + 170, 'Username:', { fontSize: '24px', color: '#c2b280' }).setOrigin(0.5, 0);
-    this.add.text(centerX, centerY + 270, 'Secret Key:', { fontSize: '24px', color: '#c2b280' }).setOrigin(0.5, 0);
+    this.add.text(centerX, centerY + 170, 'Username:', { ...textStyle, backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '24px', color: '#FFFFFF' }).setOrigin(0.5, 0);
+    this.add.text(centerX, centerY + 270, 'Secret Key:', { ...textStyle, backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '24px', color: '#FFFFFF' }).setOrigin(0.5, 0);
 
     // Input texts with a slight transparent background to blend with the scene
-    this.walletIdInputText = this.add.text(centerX, centerY + 200, '', { fontSize: '18px', color: '#000', backgroundColor: 'rgba(255, 255, 255, 0.5)', padding: { x: 10, y: 5 } }).setOrigin(0.5, 0);
-    this.secretKeyInputText = this.add.text(centerX, centerY + 300, '', { fontSize: '18px', color: '#000', backgroundColor: 'rgba(255, 255, 255, 0.5)', padding: { x: 10, y: 5 } }).setOrigin(0.5, 0);
+    this.walletIdInputText = this.add.text(centerX, centerY + 210, '', {...textStyle, backgroundColor: 'rgba(255, 255, 255, 0.5)', padding: { x: 10, y: 5 } }).setOrigin(0.5, 0);
+    this.secretKeyInputText = this.add.text(centerX, centerY + 310, '', { ...textStyle, backgroundColor: 'rgba(255, 255, 255, 0.5)', padding: { x: 10, y: 5 } }).setOrigin(0.5, 0);
 
     // Interactive areas to detect which field is being typed into
     this.makeInteractive(this.walletIdInputText, true);
@@ -45,12 +74,20 @@ export default class LoginScene extends Phaser.Scene {
     // this.input.keyboard!.on('paste', (event) => this.handlePaste(event));
     this.input.keyboard!.on('keydown', (event: KeyboardEvent) => this.handleKeyInput(event));
 
+    createStyledText(this, centerX+550, centerY+120, 'Regal Raid Limited (c)', {backgroundColor: '#0a2948'});
 
     // Submit Button with a color that complements the overall theme
-    const submitButton = this.add.text(centerX, centerY + 370, 'Submit', { fontSize: '28px', color: '#fff', backgroundColor: '#467f43', padding: { x: 10, y: 5 } })
-      .setOrigin(0.5)
+      
+    const submitButton = this.add.graphics()
+      .setInteractive(new Phaser.Geom.Rectangle(centerX - 100, centerY + 400, 200, 50), Phaser.Geom.Rectangle.Contains)
+      .fillStyle(0x467f43)
+      .fillRoundedRect(centerX - 76, centerY + 375, 150, 50, 10)
       .setInteractive()
       .on('pointerdown', () => this.submitForm());
+
+    const buttonText = this.add.text(centerX, centerY + 400, 'Submit', { ...textStyle, fontSize: '28px', color: '#FFFFFF' }).setOrigin(0.5)
+    .setInteractive()
+    .on('pointerdown', () => this.submitForm()); 
   }
   
   // ... rest of the class methods remain the same
@@ -123,9 +160,7 @@ export default class LoginScene extends Phaser.Scene {
           }
       );
 
-
-
-
+ 
     } else {
       // Handle the error case
       console.warn('Please enter both wallet ID and secret key.');
