@@ -17,11 +17,11 @@ export default class LoginScene extends Phaser.Scene {
 
   preload(): void {
     // Load the logo image
-    this.load.image('logo', 'assets/img/Designer (1).png'); 
+    this.load.image('logo', 'assets/img/RegalRaidIcon.png'); 
     this.load.image('border', 'assets/Transparent center/panel-transparent-center-003.png');
     this.load.image('waterIcon', 'assets/img/waterIcon.png'); 
     this.load.image('spaceIcon', 'assets/img/spaceIcon.png'); 
-    
+    this.load.image('divider', 'assets/Divider Fade/divider-fade-001.png')
   }
   create(): void {
 
@@ -49,7 +49,28 @@ export default class LoginScene extends Phaser.Scene {
           fontFamily: style.fontFamily || 'Garamond'
       }).setOrigin(0.5, 0);
     }
-   
+ 
+    const gradientTexture = this.textures.createCanvas('gradientTexture', 1600, 500);
+    if(gradientTexture!=null){
+      const ctx = gradientTexture.context;
+
+      const gradient = ctx.createLinearGradient(0, 0, 0, gradientTexture.height);
+      gradient.addColorStop(1, '#1E264F'); 
+      gradient.addColorStop(0, '#000500'); 
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, gradientTexture.width, gradientTexture.height); 
+      gradientTexture.refresh(); 
+      const gradientRect = this.add.sprite(centerX, centerY-10, 'gradientTexture'); 
+    }
+
+    const dividerLeft = this.add.image(centerX-550, centerY-55, 'divider').setOrigin(0.5, 0.5);
+    dividerLeft.setScale(1.8);
+    dividerLeft.setTint(0x060918);
+    const dividerRight = this.add.image(centerX+550, centerY-55, 'divider').setOrigin(0.5, 0.5);
+    dividerRight.setScale(1.8);
+    dividerRight.setRotation(Math.PI);
+    dividerRight.setTint(0x060918);
+
     //left sea icon thing
     const waterBorder = this.createNineSlice(centerX-320, centerY-55, 320, 300, 20, 20, 20, 20);
     waterBorder.setTint(0x060918);
@@ -69,13 +90,13 @@ export default class LoginScene extends Phaser.Scene {
  
     //fit the main one
     const logoBorder = this.createNineSlice(centerX, centerY-55, 380, 380, 20, 20, 20, 20);
-    logoBorder.setTint(0xffffff);
+    logoBorder.setTint(0x060918);
     logoBorder.setY(centerY-80); logoBorder.setAlpha(0); // (set some precons before)
-    this.tweens.add({ targets: logoBorder, y: centerY - 55, alpha:1, duration: 900, ease: 'Cubic', delay: 1050 }); 
+    this.tweens.add({ targets: logoBorder, y: centerY - 55, alpha:.85, duration: 900, ease: 'Cubic', delay: 1050 }); 
 
     //now the logo (-- change to new regal rebrand)
     const logo = this.add.image(centerX, centerY-55, 'logo').setOrigin(0.5, 0.5);
-    logo.setScale(.35); // Scale the logo if needed 
+    logo.setScale(.765); // Scale the logo if needed 
     logo.setY(centerY-80); logo.setAlpha(0); // (set some precons before)
     this.tweens.add({ targets: logo, y: centerY - 55, alpha:1, duration: 900, ease: 'Cubic', delay: 1050 }); 
        
@@ -100,8 +121,8 @@ export default class LoginScene extends Phaser.Scene {
     secreteKeyID.setTint(0x0a2948);
 
     // Input texts with a slight transparent background to blend with the scene
-    this.walletIdInputText = this.add.text(centerX, centerY + 210, '', {...textStyle, color: '#FFFFFF', backgroundColor: 'rgba(108, 179, 185, 0.04)', padding: { x: 10, y: 5 } }).setOrigin(0.5, 0);
-    this.secretKeyInputText = this.add.text(centerX, centerY + 315, '', { ...textStyle, fontSize: '8.5px',color: '#FFFFFF', backgroundColor: 'rgba(108, 179, 185, 0.04)', padding: { x: 10, y: 5 } }).setOrigin(0.5, 0);
+    this.walletIdInputText = this.add.text(centerX, centerY + 210, '', {...textStyle, color: '#ACACAC', backgroundColor: 'rgba(108, 179, 185, 0.24)', padding: { x: 10, y: 5 } }).setOrigin(0.5, 0);
+    this.secretKeyInputText = this.add.text(centerX, centerY + 315, '', { ...textStyle, fontSize: '8.5px',color: '#ACACAC', backgroundColor: 'rgba(108, 179, 185, 0.24)', padding: { x: 10, y: 5 } }).setOrigin(0.5, 0);
 
     // Interactive areas to detect which field is being typed into
     this.makeInteractive(this.walletIdInputText, true);
@@ -111,10 +132,10 @@ export default class LoginScene extends Phaser.Scene {
     // this.input.keyboard!.on('paste', (event) => this.handlePaste(event));
     this.input.keyboard!.on('keydown', (event: KeyboardEvent) => this.handleKeyInput(event));
 
-    createStyledText(this, centerX+550, centerY+120, 'Regal Raid Limited ©', {backgroundColor: '#0a2948'});
+    createStyledText(this, centerX+555, centerY+430, 'Regal Raid Limited ©', {color: '#FFFFFF', backgroundColor: '#0a2948'});
 
     // Submit Button with a color that complements the overall theme
-      
+    
     const submitButton = this.add.graphics()
       .setInteractive(new Phaser.Geom.Rectangle(centerX - 100, centerY + 400, 200, 50), Phaser.Geom.Rectangle.Contains)
       .fillStyle(0x467f43)
