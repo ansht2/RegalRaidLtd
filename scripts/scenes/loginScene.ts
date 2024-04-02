@@ -61,6 +61,8 @@ export default class LoginScene extends Phaser.Scene {
       ctx.fillRect(0, 0, gradientTexture.width, gradientTexture.height); 
       gradientTexture.refresh(); 
       const gradientRect = this.add.sprite(centerX, centerY-10, 'gradientTexture'); 
+      gradientRect.postFX.addShine();
+
     }
 
     const dividerLeft = this.add.image(centerX-550, centerY-55, 'divider').setOrigin(0.5, 0.5);
@@ -78,7 +80,7 @@ export default class LoginScene extends Phaser.Scene {
     waterIcon.setScale(.35); 
     waterIcon.setX(centerX-300); waterIcon.setAlpha(0); // (set some precons before)
     this.tweens.add({ targets: waterIcon, x: centerX - 320, alpha:1, duration: 800, ease: 'Back', delay: 150 });
-
+    waterIcon.postFX.addShine();
     //right space theme
     const spaceBorder = this.createNineSlice(centerX+320, centerY-55, 320, 300, 20, 20, 20, 20);
     spaceBorder.setTint(0x060918);
@@ -86,6 +88,7 @@ export default class LoginScene extends Phaser.Scene {
     spaceIcon.setScale(.322); 
     spaceIcon.setX(centerX+300); spaceIcon.setAlpha(0); // (same thing -- todo: probably make an anim function for generals)
     this.tweens.add({ targets: spaceIcon, x: centerX + 320, alpha:1, duration: 800, ease: 'Back', delay: 150 });
+    spaceIcon.postFX.addShine();
 
  
     //fit the main one
@@ -100,7 +103,8 @@ export default class LoginScene extends Phaser.Scene {
     logo.setY(centerY-80); logo.setAlpha(0); // (set some precons before)
     this.tweens.add({ targets: logo, y: centerY - 55, alpha:1, duration: 900, ease: 'Cubic', delay: 1050 }); 
        
-    
+    logo.postFX.addShine();
+
 
     //large rectangle at the bottom (slight curve)
     const rectangleWidth = 1280;
@@ -110,15 +114,19 @@ export default class LoginScene extends Phaser.Scene {
     const rectangle = this.add.graphics();
     rectangle.fillStyle(0x060918, 1);  
     rectangle.fillRoundedRect(rectangleX - rectangleWidth / 2, rectangleY, rectangleWidth, rectangleHeight, 20); // Rounded corners
-
+    // rectangle.postFX.addVignette(0.5, 0.5, 1, );
+    
+    
     this.add.text(centerX, centerY + 170, 'Username:', { ...textStyle, backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '24px', color: '#FFFFFF' }).setOrigin(0.5, 0);
     this.add.text(centerX, centerY + 270, 'Secret Key:', { ...textStyle, backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '24px', color: '#FFFFFF' }).setOrigin(0.5, 0);
 
     const walletID = this.createNineSlice(centerX, centerY+225, 900, 50, 20, 20, 20, 20);
     walletID.setTint(0x0a2948);
+    walletID.postFX.addBloom();
 
     const secreteKeyID = this.createNineSlice(centerX, centerY+325, 900, 50, 20, 20, 20, 20);
     secreteKeyID.setTint(0x0a2948);
+    secreteKeyID.postFX.addBloom();
 
     // Input texts with a slight transparent background to blend with the scene
     this.walletIdInputText = this.add.text(centerX, centerY + 210, '', {...textStyle, color: '#ACACAC', backgroundColor: 'rgba(108, 179, 185, 0.24)', padding: { x: 10, y: 5 } }).setOrigin(0.5, 0);
@@ -142,6 +150,8 @@ export default class LoginScene extends Phaser.Scene {
       .fillRoundedRect(centerX - 76, centerY + 375, 150, 50, 10)
       .setInteractive()
       .on('pointerdown', () => this.submitForm());
+    submitButton.postFX.addBloom(); 
+      
 
     const buttonText = this.add.text(centerX, centerY + 400, 'Login', { ...textStyle, fontSize: '28px', color: '#FFFFFF' }).setOrigin(0.5)
     .setInteractive()

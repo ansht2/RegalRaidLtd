@@ -43,33 +43,52 @@ export default class MainScene extends Phaser.Scene {
     }
 
     create(): void {
+        const gameManager: GameManager = this.getGameManager();
+
         this.gridWidth = this.scale.width / this.cellSize;
         this.gridHeight = this.scale.height / this.cellSize;
 
 
-        this.add.image(this.scale.width / 2, this.scale.height / 2, 'background').setDisplaySize(this.scale.width, this.scale.height);
-        this.drawGrid();
+        const sprite = this.add.image(this.scale.width / 2, this.scale.height / 2, 'background').setDisplaySize(this.scale.width, this.scale.height);
+        this.drawGrid(); 
+        
+        if(sprite.preFX!=null) {
+            sprite.preFX.addBlur(1, undefined, undefined, 0.03);   
+            sprite.preFX.addBloom();  
+            const fx = sprite.preFX.addReveal(0.1, 0, 0);
 
+            this.tweens.add({
+                targets: fx,
+                progress: 1,
+                hold: 1000,
+                duration: 2000
+            });
+
+        }
         this.statusBackground = this.add.graphics({fillStyle: {color: 0x000000, alpha: 0.5}});
-        this.statusBackground.fillRect(17, 10, 200, 70); // Adjust size and position as needed
-
+        this.statusBackground.fillRect(17, 10, 220, 90); // Adjust size and position as needed
+        
+        const statusBorder = this.createNineSlice(127, 55, 220, 90, 20, 20, 20, 20);
         // Ensure the text appears on top of the background rectangle
+        statusBorder.setAlpha(0.85);
 
         this.enemyTerritoriesCounterBackground = this.add.graphics({fillStyle: {color: 0x880000, alpha: 0.5}});
         this.enemyTerritoriesCounterBackground.fillRect(this.scale.width - 212, this.scale.height - 80, 208, 70); // Adjust size and position as needed
+        const enemyBorder = this.createNineSlice2(this.scale.width - 109, this.scale.height - 45, 208, 75, 20, 20, 20, 20);
+        
+        enemyBorder.setAlpha(0.85);
+        const textStyle = this.createTextStyle('16px', '#FFF', 15, 5, 'Open Sans');
+        
 
-        this.enemyTerritoriesCounterText = this.add.text(this.scale.width - 208, this.scale.height - 74, 'Enemy Territories: 0', {
-            fontSize: '16px',
-            color: '#FFF'
-        });
+        this.enemyTerritoriesCounterText = this.add.text(this.scale.width - 190, this.scale.height - 57, 'Enemy Territories: 0', textStyle);
 
         // Make sure to update the counter when the enemy is born and territories change
         this.updateEnemyTerritoriesCounter();
         this.displayCurrentWeapon();
-
-        this.coinsText = this.add.text(16, 16, 'Coins:', {fontSize: '16px', color: '#FFF'});
-        this.territoriesText = this.add.text(16, 36, 'Territories Owned: 0', {fontSize: '16px', color: '#FFF'});
-        this.playerNameText = this.add.text(16, 56, 'Player Name: ', {fontSize: '16px', color: '#FFF'});
+        
+        this.coinsText = this.add.text(20, 20, 'Coins:', textStyle);
+        this.territoriesText = this.add.text(20, 40, 'Territories Owned: 0', textStyle);
+        this.playerNameText = this.add.text(20, 60, 'Player Name: ', textStyle);
 
         let shopBackground = this.add.graphics({fillStyle: {color: 0xffffff, alpha: 0.5}});
         let shopIconSize = 32; // The size you want for the shop icon
@@ -110,6 +129,14 @@ export default class MainScene extends Phaser.Scene {
         return currentWeapon ? (boostFactors[currentWeapon.imageKey] || 1) : 1;
     }
 
+    createTextStyle(fontSize, color, paddingX, paddingY, fontFamily) {
+        return {
+            fontSize: fontSize || '18px',
+            color: color || '#000',
+            padding: { x: paddingX || 10, y: paddingY || 5 },
+            fontFamily: fontFamily || 'Garamond'
+        };
+    }
     private displayCurrentWeapon(): void {
         const gameManager: GameManager = this.getGameManager();
         const currentWeapon = gameManager.getCurrentWeapon();
@@ -155,7 +182,8 @@ export default class MainScene extends Phaser.Scene {
 
 
     private updateEnemyTerritoriesCounter(): void {
-        this.enemyTerritoriesCounterText.setText(`Enemy Territories: ${this.enemyTerritories.length}`);
+        
+        this.enemyTerritoriesCounterText.setText(`Enemy Territories: ${this.enemyTerritories.length}`, );
     }
 
     private awardCoins(): void {
@@ -234,6 +262,7 @@ export default class MainScene extends Phaser.Scene {
                     ).setFillStyle(0x0000FF, 0.5);
                     const borderFirst = this.createNineSlice(x * this.cellSize + this.cellSize / 2, y * this.cellSize + this.cellSize / 2, 
                     this.cellSize, this.cellSize, 20, 20, 20, 20);
+                    borderFirst.setAlpha(0.5);
                     // borderFirst.setTint(0x0000FF);
 
                 } else {
@@ -310,6 +339,8 @@ export default class MainScene extends Phaser.Scene {
                 const personalBox = this.createNineSlice(x * this.cellSize + this.cellSize / 2, y * this.cellSize + this.cellSize / 2, 
                 this.cellSize, this.cellSize, 20, 20, 20, 20);
                 // personalBox.setTint(0x0000FF);
+                personalBox.setAlpha(0.5);
+
                 this.updateStatusText();
             }
         });

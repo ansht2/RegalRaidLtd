@@ -12,9 +12,12 @@ const textStyle = {
 };
 
 function createInstructionsPopup(scene) {
+  
   let graphics = scene.add.graphics();
   // graphics.fillStyle(0xffffff, 0.8);
-  // graphics.fillRect(100, 400, 600, 200);
+  // graphics.fillRect(100, 400, 600, 200); 
+  let background = scene.add.rectangle(0, 0, scene.cameras.main.width, scene.cameras.main.height, 0x000000, 0.4);
+  background.setOrigin(0);
 
   const waterBorder = scene.createNineSlice(400, 500, 650, 200, 20, 20, 20, 20);
   waterBorder.setTint(0xFFFFFF);
@@ -28,6 +31,7 @@ function createInstructionsPopup(scene) {
     graphics.clear();
     text.setVisible(false);
     closeButton.setVisible(false);
+    background.setVisible(false);
     waterBorder.setVisible(false);
     scene.instructionsRead = true;
   });
@@ -84,9 +88,21 @@ export default class CountryScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.add.image(this.scale.width / 2, this.scale.height / 2, 'background')
+    const sprite = this.add.image(this.scale.width / 2, this.scale.height / 2, 'background')
         .setDisplaySize(this.scale.width, this.scale.height); // Adjust size to fit the screen
-    this.drawGrid();
+    this.drawGrid(); 
+    
+
+    // Check if preFX exists
+if (sprite.preFX !== null) {
+  // Add initial blur
+  sprite.preFX.addBlur(1, undefined, undefined, 0.3);
+  sprite.preFX.addBloom();  
+  // const shineFX = sprite.preFX.addShine(0.25);  
+
+}
+
+
     createInstructionsPopup(this);
 
   }
@@ -118,8 +134,7 @@ export default class CountryScene extends Phaser.Scene {
             this.cellSize, // Rectangle height
             0xCCCCCC, // Color of the rectangle
             0
-        ).setStrokeStyle(1, 0x000000); // Add a black stroke to the rectangle
-
+        ).setStrokeStyle(1, 0x000000); // Add a black stroke to the rectangle 
         cell.setInteractive().on('pointerdown', () => {
           if (this.instructionsRead){
             if (this.country) {
