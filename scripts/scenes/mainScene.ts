@@ -263,6 +263,7 @@ export default class MainScene extends Phaser.Scene {
                     const borderFirst = this.createNineSlice(x * this.cellSize + this.cellSize / 2, y * this.cellSize + this.cellSize / 2, 
                     this.cellSize, this.cellSize, 20, 20, 20, 20);
                     borderFirst.setAlpha(0.5);
+                    
                     // borderFirst.setTint(0x0000FF);
 
                 } else {
@@ -336,6 +337,8 @@ export default class MainScene extends Phaser.Scene {
                     gameManager.ownedTerritories.push({x, y});
                 }
                 cell.setFillStyle(0x0000FF, 0.5); // Ensure first block is immediately blue
+                // cell.postFX.addShadow(0, 0, 0.01);
+
                 const personalBox = this.createNineSlice(x * this.cellSize + this.cellSize / 2, y * this.cellSize + this.cellSize / 2, 
                 this.cellSize, this.cellSize, 20, 20, 20, 20);
                 // personalBox.setTint(0x0000FF);

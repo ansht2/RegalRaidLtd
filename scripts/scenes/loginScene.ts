@@ -122,11 +122,11 @@ export default class LoginScene extends Phaser.Scene {
 
     const walletID = this.createNineSlice(centerX, centerY+225, 900, 50, 20, 20, 20, 20);
     walletID.setTint(0x0a2948);
-    walletID.postFX.addBloom();
+    // walletID.postFX.addShine();
 
     const secreteKeyID = this.createNineSlice(centerX, centerY+325, 900, 50, 20, 20, 20, 20);
     secreteKeyID.setTint(0x0a2948);
-    secreteKeyID.postFX.addBloom();
+    // secreteKeyID.postFX.addShine();
 
     // Input texts with a slight transparent background to blend with the scene
     this.walletIdInputText = this.add.text(centerX, centerY + 210, '', {...textStyle, color: '#ACACAC', backgroundColor: 'rgba(108, 179, 185, 0.24)', padding: { x: 10, y: 5 } }).setOrigin(0.5, 0);
@@ -151,6 +151,7 @@ export default class LoginScene extends Phaser.Scene {
       .setInteractive()
       .on('pointerdown', () => this.submitForm());
     submitButton.postFX.addBloom(); 
+    // submitButton.postFX.addShine(.25); 
       
 
     const buttonText = this.add.text(centerX, centerY + 400, 'Login', { ...textStyle, fontSize: '28px', color: '#FFFFFF' }).setOrigin(0.5)
