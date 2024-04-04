@@ -1,7 +1,5 @@
 import Phaser from 'phaser';
 import GameManager from "../objects/gameManager";
-import {Keypair} from "@solana/web3.js";
-import blockchainClient from "./transaction";
 
 function createInstructionsPopup(scene) {
   let graphics = scene.add.graphics();
@@ -106,21 +104,12 @@ export default class CountryScene extends Phaser.Scene {
               // Store the selected cell reference for future clicks
               this.selectedCell = cell;
               // Store the index of the selected cell
-              const gameManager = this.registry.get('gameManager');
+              const gameManager = this.game['gameManager'] as GameManager;
               gameManager.country = {x,y};
               this.country = {x, y};
-
               console.log(`Selected country index: ${x}, ${y}`); // For debugging
               gameManager.ownedTerritories.push(this.country);
-
-              let gameAcc = this.registry.get('gameAccount');
-              let prvAcc = this.registry.get('privateKey')
-              let username = this.registry.get('username');
-              new blockchainClient(prvAcc).choose_country(prvAcc,username,gameAcc, this.country).then(()=>{
-                this.scene.start('MainScene');
-              })
-
-
+              this.scene.start('MainScene')
             }
           }
         });

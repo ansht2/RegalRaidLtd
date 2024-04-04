@@ -5,17 +5,17 @@ import GameManager from "../objects/gameManager";
 
 import { AnchorProvider, Program, Idl, setProvider } from "@coral-xyz/anchor";
 import IDL from "./idl.json";
-// import { CustomChainConfig } from "@web3auth/base";
-// import { Web3Auth } from "@web3auth/modal";
+import { CustomChainConfig } from "@web3auth/base";
+import { Web3Auth } from "@web3auth/modal";
 
 import NodeWallet from "@coral-xyz/anchor/dist/cjs/nodewallet";
-// import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 
 
 
-// import { SolflareAdapter } from '@web3auth/solflare-adapter';
-// import {SolanaPrivateKeyProvider, SolanaWallet} from "@web3auth/solana-provider";
-// import { WEB3AUTH_NETWORK } from "@web3auth/base";
+import { SolflareAdapter } from '@web3auth/solflare-adapter';
+import {SolanaPrivateKeyProvider, SolanaWallet} from "@web3auth/solana-provider";
+import { WEB3AUTH_NETWORK } from "@web3auth/base";
 
 
 
@@ -51,7 +51,8 @@ export default class blockchainClient{
 
         console.log("Building Game: ", gameAccount.publicKey.toString());
 
-         // let txhash = await this.program.methods.initializeGame(new anchor.BN(42)).accounts({
+
+        // let txhash = await this.program.methods.initializeGame(new anchor.BN(42)).accounts({
         //     "game": gameAccount.publicKey,
         //     "user": wallet.publicKey,
         //     "system_program": this.programId
