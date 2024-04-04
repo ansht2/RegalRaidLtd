@@ -2,21 +2,37 @@ import Phaser from 'phaser';
 import GameManager from "../objects/gameManager";
 import {Keypair} from "@solana/web3.js";
 import blockchainClient from "./transaction";
+import { Plugin as NineSlicePlugin } from 'phaser3-nineslice';
+
+const textStyle = {
+  fontSize: '18px',
+  color: '#000', 
+  padding: { x: 10, y: 5 },
+  fontFamily: 'Garamond' // You can specify your desired font family here
+};
 
 function createInstructionsPopup(scene) {
+  
   let graphics = scene.add.graphics();
-  graphics.fillStyle(0xffffff, 0.8);
-  graphics.fillRect(100, 400, 600, 200);
+  // graphics.fillStyle(0xffffff, 0.8);
+  // graphics.fillRect(100, 400, 600, 200); 
+  let background = scene.add.rectangle(0, 0, scene.cameras.main.width, scene.cameras.main.height, 0x000000, 0.4);
+  background.setOrigin(0);
 
-  let instructions = "Your mission, should you choose to accept it, is to capture the most land area.\nChoose a country by clicking one of the cells.";
-  let text = scene.add.text(400, 500, instructions, { fontSize: '24px', color: '#000', align: 'center', wordWrap: { width: 580 } });
+  const waterBorder = scene.createNineSlice(400, 500, 650, 200, 20, 20, 20, 20);
+  waterBorder.setTint(0xFFFFFF);
+  let instructions = "Your mission, should you choose to accept it, is to capture the most land area.\n \nChoose a country by clicking one of the cells.";
+  let text = scene.add.text(400, 500, instructions, { ...textStyle, fontSize: '25px', color: '#000', align: 'center', wordWrap: { width: 580 } });
   text.setOrigin(0.5, 0.5);
-  let closeButton = scene.add.text(680, 400, 'X', { fontSize: '24px', color: '#ff0000' });
+  
+  let closeButton = scene.add.text(690, 410, 'x', { fontSize: '25px', color: '#ff0000' });
   closeButton.setInteractive();
   closeButton.on('pointerdown', function () {
     graphics.clear();
     text.setVisible(false);
     closeButton.setVisible(false);
+    background.setVisible(false);
+    waterBorder.setVisible(false);
     scene.instructionsRead = true;
   });
 }
@@ -67,13 +83,26 @@ export default class CountryScene extends Phaser.Scene {
 
   preload(): void {
     this.load.image('background', 'assets/img/background.png');
+    this.load.image('border1', 'assets/Panel/panel-026.png');
     // Preload assets if any
   }
 
   create(): void {
-    this.add.image(this.scale.width / 2, this.scale.height / 2, 'background')
+    const sprite = this.add.image(this.scale.width / 2, this.scale.height / 2, 'background')
         .setDisplaySize(this.scale.width, this.scale.height); // Adjust size to fit the screen
-    this.drawGrid();
+    this.drawGrid(); 
+    
+
+    // Check if preFX exists
+if (sprite.preFX !== null) {
+  // Add initial blur
+  sprite.preFX.addBlur(1, undefined, undefined, 0.3);
+  sprite.preFX.addBloom();  
+  // const shineFX = sprite.preFX.addShine(0.25);  
+
+}
+
+
     createInstructionsPopup(this);
 
   }
@@ -81,7 +110,20 @@ export default class CountryScene extends Phaser.Scene {
   update(time: number, delta: number): void {
     // Update logic
   }
-
+  private createNineSlice(x: number, y: number, width: number, height: number, leftWidth: number, rightWidth: number, topHeight: number, bottomHeight: number) {
+    return this.add.nineslice(
+        x,              // x-coordinate
+        y,              // y-coordinate
+        'border1',       // texture key
+        undefined,      // frame (optional)
+        width,          // width
+        height,         // height
+        leftWidth,      // leftWidth
+        rightWidth,     // rightWidth
+        topHeight,      // topHeight
+        bottomHeight    // bottomHeight
+    );
+  }
   private drawGrid(): void {
     for (let y = 0; y < this.gridHeight; y++) {
       for (let x = 0; x < this.gridWidth; x++) {
@@ -92,8 +134,7 @@ export default class CountryScene extends Phaser.Scene {
             this.cellSize, // Rectangle height
             0xCCCCCC, // Color of the rectangle
             0
-        ).setStrokeStyle(1, 0x000000); // Add a black stroke to the rectangle
-
+        ).setStrokeStyle(1, 0x000000); // Add a black stroke to the rectangle 
         cell.setInteractive().on('pointerdown', () => {
           if (this.instructionsRead){
             if (this.country) {

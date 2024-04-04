@@ -37,36 +37,59 @@ export default class MainScene extends Phaser.Scene {
         this.load.image('buyButton', 'assets/img/icons8-buy-sign-96.png');
         this.load.image('bomb', 'assets/img/bomb2.png');
         this.load.image('pistol', 'assets/img/pistol.png');
-    }
+        this.load.image('border2', 'assets/Transparent center/panel-transparent-center-028.png');
+        this.load.image('border3', 'assets/Transparent center/panel-transparent-center-026.png');
+     }
 
     create(): void {
+        const gameManager: GameManager = this.getGameManager();
+
         this.gridWidth = this.scale.width / this.cellSize;
-        this.gridHeight = this.scale.height / this.cellSize;
+        this.gridHeight = this.scale.height / this.cellSize;    
+        
+        const sprite = this.add.image(this.scale.width / 2, this.scale.height / 2, 'background').setDisplaySize(this.scale.width, this.scale.height);
+        this.drawGrid(); 
+        
+        if(sprite.preFX!=null) {
+            sprite.preFX.addBlur(1, undefined, undefined, 0.03);   
+            sprite.preFX.addBloom();  
+            const fx = sprite.preFX.addReveal(0.1, .5, .5);
 
+            this.tweens.add({
+                targets: fx,
+                progress: 1,
+                hold: 1000,
+                delay: 800,
+                duration: 5000,
+                ease: 'Cubic'  
+            });
 
-        this.add.image(this.scale.width / 2, this.scale.height / 2, 'background').setDisplaySize(this.scale.width, this.scale.height);
-        this.drawGrid();
-
-        this.statusBackground = this.add.graphics({fillStyle: {color: 0x000000, alpha: 0.5}});
-        this.statusBackground.fillRect(17, 10, 200, 70); // Adjust size and position as needed
-
+        }
+        const statusBorder = this.createNineSlice(127, 55, 220, 90, 20, 20, 20, 20);
         // Ensure the text appears on top of the background rectangle
+        statusBorder.setAlpha(0.85);
+        this.statusBackground = this.add.graphics({fillStyle: {color: 0x000000, alpha: 0.5}});
+        this.statusBackground.fillRect(17, 10, 220, 90); // Adjust size and position as needed
+        
+        
 
         this.enemyTerritoriesCounterBackground = this.add.graphics({fillStyle: {color: 0x880000, alpha: 0.5}});
         this.enemyTerritoriesCounterBackground.fillRect(this.scale.width - 212, this.scale.height - 80, 208, 70); // Adjust size and position as needed
+        const enemyBorder = this.createNineSlice2(this.scale.width - 109, this.scale.height - 45, 208, 75, 20, 20, 20, 20);
+        
+        enemyBorder.setAlpha(0.85);
+        const textStyle = this.createTextStyle('16px', '#FFF', 15, 5, 'Open Sans');
+        
 
-        this.enemyTerritoriesCounterText = this.add.text(this.scale.width - 208, this.scale.height - 74, 'Enemy Territories: 0', {
-            fontSize: '16px',
-            color: '#FFF'
-        });
+        this.enemyTerritoriesCounterText = this.add.text(this.scale.width - 190, this.scale.height - 57, 'Enemy Territories: 0', textStyle);
 
         // Make sure to update the counter when the enemy is born and territories change
         this.updateEnemyTerritoriesCounter();
         this.displayCurrentWeapon();
-
-        this.coinsText = this.add.text(16, 16, 'Coins:', {fontSize: '16px', color: '#FFF'});
-        this.territoriesText = this.add.text(16, 36, 'Territories Owned: 0', {fontSize: '16px', color: '#FFF'});
-        this.playerNameText = this.add.text(16, 56, 'Player Name: ', {fontSize: '16px', color: '#FFF'});
+        
+        this.coinsText = this.add.text(20, 20, 'Coins:', textStyle);
+        this.territoriesText = this.add.text(20, 40, 'Territories Owned: 0', textStyle);
+        this.playerNameText = this.add.text(20, 60, 'Player Name: ', textStyle);
 
         let shopBackground = this.add.graphics({fillStyle: {color: 0xffffff, alpha: 0.5}});
         let shopIconSize = 32; // The size you want for the shop icon
@@ -78,8 +101,19 @@ export default class MainScene extends Phaser.Scene {
         // Add the shop icon on top of the white transparent background
         this.shopIcon = this.add.image(shopBackgroundX + padding + shopIconSize / 2, shopBackgroundY + padding + shopIconSize / 2, 'shop').setDisplaySize(shopIconSize, shopIconSize).setInteractive();
         this.shopIcon.on('pointerdown', () => this.scene.start('ShopScene'));
-
-
+        
+        var graphics = this.add.graphics();
+        graphics.fillStyle(0x000000);
+        graphics.fillRect(0, 0, this.scale.width, this.scale.height);
+        graphics.alpha = 1;
+        
+        this.tweens.add({
+            targets: graphics,
+            alpha: 0,
+            duration: 1000, 
+            delay: 0,
+            repeat: 0
+        });
         this.updateStatusText();
 
         this.time.addEvent({
@@ -88,6 +122,9 @@ export default class MainScene extends Phaser.Scene {
             callbackScope: this,
             loop: true,
         });
+
+        
+        
     }
 
     private getCoinBoostFactor(): number {
@@ -107,6 +144,14 @@ export default class MainScene extends Phaser.Scene {
         return currentWeapon ? (boostFactors[currentWeapon.imageKey] || 1) : 1;
     }
 
+    createTextStyle(fontSize, color, paddingX, paddingY, fontFamily) {
+        return {
+            fontSize: fontSize || '18px',
+            color: color || '#000',
+            padding: { x: paddingX || 10, y: paddingY || 5 },
+            fontFamily: fontFamily || 'Garamond'
+        };
+    }
     private displayCurrentWeapon(): void {
         const gameManager: GameManager = this.getGameManager();
         const currentWeapon = gameManager.getCurrentWeapon();
@@ -152,7 +197,8 @@ export default class MainScene extends Phaser.Scene {
 
 
     private updateEnemyTerritoriesCounter(): void {
-        this.enemyTerritoriesCounterText.setText(`Enemy Territories: ${this.enemyTerritories.length}`);
+        
+        this.enemyTerritoriesCounterText.setText(`Enemy Territories: ${this.enemyTerritories.length}`, );
     }
 
     private awardCoins(): void {
@@ -187,7 +233,34 @@ export default class MainScene extends Phaser.Scene {
         });
         this.updateEnemyTerritoriesCounter();
     }
-
+    private createNineSlice(x: number, y: number, width: number, height: number, leftWidth: number, rightWidth: number, topHeight: number, bottomHeight: number) {
+        return this.add.nineslice(
+            x,              // x-coordinate
+            y,              // y-coordinate
+            'border2',       // texture key
+            undefined,      // frame (optional)
+            width,          // width
+            height,         // height
+            leftWidth,      // leftWidth
+            rightWidth,     // rightWidth
+            topHeight,      // topHeight
+            bottomHeight    // bottomHeight
+        );
+      }
+      private createNineSlice2(x: number, y: number, width: number, height: number, leftWidth: number, rightWidth: number, topHeight: number, bottomHeight: number) {
+        return this.add.nineslice(
+            x,              // x-coordinate
+            y,              // y-coordinate
+            'border3',       // texture key
+            undefined,      // frame (optional)
+            width,          // width
+            height,         // height
+            leftWidth,      // leftWidth
+            rightWidth,     // rightWidth
+            topHeight,      // topHeight
+            bottomHeight    // bottomHeight
+        );
+      }
     private drawGrid(): void {
         let gm = this.getGameManager();
         for (let y = 0; y < this.gridHeight; y++) {
@@ -202,6 +275,13 @@ export default class MainScene extends Phaser.Scene {
                         color,
                         0
                     ).setFillStyle(0x0000FF, 0.5);
+                    const borderFirst = this.createNineSlice(x * this.cellSize + this.cellSize / 2, y * this.cellSize + this.cellSize / 2, 
+                    this.cellSize, this.cellSize, 20, 20, 20, 20);
+                    borderFirst.setAlpha(0.5);
+                    borderFirst.postFX.addShine();
+
+                    
+                    // borderFirst.setTint(0x0000FF);
 
                 } else {
                     const cell = this.add.rectangle(
@@ -212,7 +292,7 @@ export default class MainScene extends Phaser.Scene {
                         color,
                         0
                     ).setStrokeStyle(1, 0x000000, 1);
-
+                        
                     this.setCellInteractive(cell, x, y);
                 }
             }
@@ -274,6 +354,14 @@ export default class MainScene extends Phaser.Scene {
                     gameManager.ownedTerritories.push({x, y});
                 }
                 cell.setFillStyle(0x0000FF, 0.5); // Ensure first block is immediately blue
+
+                const personalBox = this.createNineSlice(x * this.cellSize + this.cellSize / 2, y * this.cellSize + this.cellSize / 2, 
+                this.cellSize, this.cellSize, 20, 20, 20, 20);
+                personalBox.postFX.addShine();
+
+                // personalBox.setTint(0x0000FF);
+                personalBox.setAlpha(0.5);
+
                 this.updateStatusText();
             }
         });
@@ -290,8 +378,13 @@ export default class MainScene extends Phaser.Scene {
             this.cellSize,
             this.cellSize,
             0xFF0000,
-            0.5
+            0.25
         ));
+        
+        const enemyBox =this.createNineSlice2(edgeX* this.cellSize + this.cellSize / 2, edgeY * this.cellSize + this.cellSize / 2, 
+        this.cellSize, this.cellSize, 20, 20, 20, 20);
+        
+        enemyBox.setTint(0xFF0000);
     }
 
     private expandEnemies(): void {
@@ -330,8 +423,12 @@ export default class MainScene extends Phaser.Scene {
                     this.cellSize,
                     this.cellSize,
                     0xFF0000,
-                    0.5
+                    0.25
                 ));
+                
+                const enemyBox = this.createNineSlice2(newPosition.x * this.cellSize + this.cellSize / 2, newPosition.y * this.cellSize + this.cellSize / 2, 
+                this.cellSize, this.cellSize, 20, 20, 20, 20);
+                enemyBox.setTint(0xFF0000);
             }
         }
     }

@@ -1,0 +1,10 @@
+/.cache
+/dist
+/node_modules/
+phaser-template/node_modules
+
+phaser-template/dist
+node_modules
+phaser-template/.cache
+
+phaser-template/src/
