@@ -100,7 +100,7 @@ export default class MainScene extends Phaser.Scene {
 
         // Add the shop icon on top of the white transparent background
         this.shopIcon = this.add.image(shopBackgroundX + padding + shopIconSize / 2, shopBackgroundY + padding + shopIconSize / 2, 'shop').setDisplaySize(shopIconSize, shopIconSize).setInteractive();
-        this.shopIcon.on('pointerdown', () => this.scene.start('ShopScene'));
+        this.shopIcon.on('pointerdown', () => this.scene.start('InventoryScene'));
         
         var graphics = this.add.graphics();
         graphics.fillStyle(0x000000);
