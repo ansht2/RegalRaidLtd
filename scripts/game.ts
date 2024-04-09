@@ -23,7 +23,7 @@ const config = {
     width: DEFAULT_WIDTH,
     height: DEFAULT_HEIGHT
   },
-  scene:[LoginScene, PreloadScene, CountryScene, MainScene, InventoryScene, ShopScene],
+  scene:[LoginScene, PreloadScene, CountryScene, InventoryScene, MainScene, ShopScene],
   
   plugins: {
     global: [ NineSlicePlugin.DefaultCfg ],

@@ -2,10 +2,10 @@ import Phaser from 'phaser';
 
 // Sample NFT data
 const nfts = [
-    { name: "Admiral", rarity: "Common", inUse: false, image:'assets/img/AdmiralMonkey.png' }, 
-    { name: "Wukong", rarity: "Common", inUse: false, image:'assets/img/WukongMonkey.png' },  
-    { name: "King", rarity: "Rare", inUse: false, image: 'assets/img/CrownMonkey.png' }, 
-    { name: "General", rarity: "Rare", inUse: false, image: 'assets/img/GeneralMonkey.png' }, 
+    { name: "Admiral", rarity: "Common", inUse: false, image:'assets/img/BasicWarrior.jpg' }, 
+    { name: "Wukong", rarity: "Common", inUse: false, image:'assets/img/conquestWarrior.jpg' },  
+    { name: "King", rarity: "Rare", inUse: false, image: 'assets/img/KingEagle.png' }, 
+    { name: "General", rarity: "Rare", inUse: false, image: 'assets/img/FalconGeneral.png' }, 
     { name: "King", rarity: "Legendary", inUse: false, image: 'assets/img/CrownMonkey.png' }, 
     { name: "General", rarity: "Legendary", inUse: false, image: 'assets/img/GeneralMonkey.png' }, 
     { name: "Wukong", rarity: "Legendary", inUse: false, image:'assets/img/WukongMonkey.png' },
@@ -15,9 +15,7 @@ const nfts = [
     { name: "King", rarity: "Legendary", inUse: false, image: 'assets/img/CrownMonkey.png' }, 
     { name: "General", rarity: "Legendary", inUse: false, image: 'assets/img/GeneralMonkey.png' }, 
     { name: "Wukong", rarity: "Legendary", inUse: false, image:'assets/img/WukongMonkey.png' },
-    { name: "King", rarity: "Legendary", inUse: false, image: 'assets/img/CrownMonkey.png' }, 
-    { name: "General", rarity: "Legendary", inUse: false, image: 'assets/img/GeneralMonkey.png' },
-    { name: "Admiral", rarity: "Legendary", inUse: false, image:'assets/img/AdmiralMonkey.png' }, 
+    { name: "King", rarity: "Legendary", inUse: false, image: 'assets/img/CrownMonkey.png' },  
     // Add more sample NFTs as needed
 ];
 
@@ -31,6 +29,8 @@ export default class InventoryScene extends Phaser.Scene {
         nfts.forEach(nft => {
             this.load.image(nft.name, nft.image);
         });
+        this.load.image('map', 'assets/img/UIBackground.jpg'); 
+
     }
 
     create() {
@@ -46,9 +46,23 @@ export default class InventoryScene extends Phaser.Scene {
         background.displayWidth = this.game.config.width as number;
         background.displayHeight = this.game.config.height as number;
         this.cameras.main.setBackgroundColor('#0a2948');
+        const gradientTexture = this.textures.createCanvas('gradientTexture', 2600, 2080);
+        if(gradientTexture!=null){
+        const ctx = gradientTexture.context;
 
+        const gradient = ctx.createLinearGradient(0, 0, 0, gradientTexture.height);
+        gradient.addColorStop(1, '#1E264F'); 
+        gradient.addColorStop(0, '#000500'); 
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, gradientTexture.width, gradientTexture.height); 
+        gradientTexture.refresh(); 
+        const gradientRect = this.add.sprite(0, 0-10, 'gradientTexture'); 
+    //   gradientRect.postFX.addShine();
+    const waterIcon = this.add.image(650, 370, 'map').setOrigin(0.5, 0.5).setDisplaySize(1300, 740).setData('persistent', true); 
+
+    }
         // Create and position the title
-        const title = this.add.text(this.game.config.width as number / 2, 30, 'User NFT Inventory', { ...textStyle, fontSize: '24px', color: '#FFFFFF' }).setOrigin(0.5).setData('persistent', true);
+        const title = this.add.text(this.game.config.width as number / 2, 150, '- NFT Collection -', { ...textStyle, fontSize: '24px', color: '#FFFFFF' }).setOrigin(0.5).setData('persistent', true);
 
         // Display sorting dropdown
         const sortingSelect = this.add.dom(300, 70, 'select');
@@ -120,9 +134,13 @@ export default class InventoryScene extends Phaser.Scene {
             }
         });
     
+        // Calculate center positions
+        const centerX = this.scale.width / 2+90;
+        const centerY = this.scale.height / 2+90;
+    
         // Display NFT cards
-        let x = 100;
-        let y = 130;
+        let x = centerX - (150 * 7 / 2); // Adjusted for 7 cards per row
+        let y = centerY - (200 * Math.ceil(nftsToRender.length / 7) / 2); // Adjusted for 7 cards per row
         let rowCounter = 0;
         nftsToRender.forEach(nft => {
             const card = this.add.image(x, y, nft.name).setOrigin(0.5).setDisplaySize(145, 145); // Set size of the card
@@ -143,9 +161,9 @@ export default class InventoryScene extends Phaser.Scene {
     
             x += 150;
             rowCounter++;
-            if (rowCounter === 8) { // Adjusted to 8 images per row
+            if (rowCounter === 7) { // Adjusted to 7 images per row
                 rowCounter = 0;
-                x = 100;
+                x = centerX - (150 * 7 / 2); // Adjusted for 7 cards per row
                 y += 200;
             }
     
@@ -155,11 +173,22 @@ export default class InventoryScene extends Phaser.Scene {
             }
         });
     
+    
         // Display NFT names and rarities
         nftsToRender.forEach((nft, index) => {
-            const textX = 100 + (index % 8) * 150;
-            const textY = 130 + Math.floor(index / 8) * 200 + 100;
+            const textX = centerX - (150 * 7 / 2) + (index % 7) * 150; // Adjusted for 7 cards per row
+            const textY = centerY - (200 * Math.ceil(nftsToRender.length / 7) / 2) + Math.floor(index / 7) * 200 + 100; // Adjusted for 7 cards per row
             this.add.text(textX, textY, `${nft.name}\n(${nft.rarity})`, { ...textStyle, fontSize: '20px', color: '#FFFFFF', align: 'center' }).setOrigin(0.5);
         });
+        
+        // Display back button
+        const backBtnBg = this.add.rectangle(centerX-90, this.scale.height - 40, 100, 50, 0x000000, 1).setInteractive();
+        const backButton = this.add.text(centerX-90, this.scale.height - 40, 'Back', {...textStyle, fontSize: '24px', color: '#FFFFFF' })
+            .setInteractive()
+            .on('pointerdown', () => this.scene.start('MainScene'))
+            .setOrigin(0.5);
+        backBtnBg.on('pointerdown', () => this.scene.start('MainScene'));
     }
+    
+    
 }
