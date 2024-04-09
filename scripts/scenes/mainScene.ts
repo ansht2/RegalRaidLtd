@@ -390,30 +390,30 @@ export default class MainScene extends Phaser.Scene {
     private expandEnemies(): void {
         const gameManager: GameManager = this.getGameManager();
         this.updateEnemyTerritoriesCounter();
-
+    
         // Select one random enemy territory to expand from
         if (this.enemyTerritories.length > 0) {
             const randomIndex = Math.floor(Math.random() * this.enemyTerritories.length);
             const territory = this.enemyTerritories[randomIndex];
-
+    
             // Define adjacent positions
             const adjacentPositions = [
-                {x: territory.x - 1, y: territory.y},
-                {x: territory.x + 1, y: territory.y},
-                {x: territory.x, y: territory.y - 1},
-                {x: territory.x, y: territory.y + 1},
+                { x: territory.x - 1, y: territory.y },
+                { x: territory.x + 1, y: territory.y },
+                { x: territory.x, y: territory.y - 1 },
+                { x: territory.x, y: territory.y + 1 },
             ];
-
+    
             // Shuffle adjacent positions to randomize direction
             const shuffledPositions = adjacentPositions.sort(() => 0.5 - Math.random());
-
+    
             // Try to find a valid position to expand to
-            const newPosition = shuffledPositions.find(pos => {
-                    pos.x >= 0 && pos.x < this.gridWidth && pos.y >= 0 && pos.y < this.gridHeight &&
-                    !this.isTerritoryOccupied(pos.x, pos.y, gameManager)
-                }
+            const newPosition = shuffledPositions.find(pos =>
+                pos.x >= 0 && pos.x < this.gridWidth &&
+                pos.y >= 0 && pos.y < this.gridHeight &&
+                !this.isTerritoryOccupied(pos.x, pos.y, gameManager)
             );
-
+    
             // If a valid position is found, add it to enemy territories and display it
             if (newPosition) {
                 this.enemyTerritories.push(newPosition);
@@ -425,13 +425,14 @@ export default class MainScene extends Phaser.Scene {
                     0xFF0000,
                     0.25
                 ));
-                
-                const enemyBox = this.createNineSlice2(newPosition.x * this.cellSize + this.cellSize / 2, newPosition.y * this.cellSize + this.cellSize / 2, 
-                this.cellSize, this.cellSize, 20, 20, 20, 20);
+    
+                const enemyBox = this.createNineSlice2(newPosition.x * this.cellSize + this.cellSize / 2, newPosition.y * this.cellSize + this.cellSize / 2,
+                    this.cellSize, this.cellSize, 20, 20, 20, 20);
                 enemyBox.setTint(0xFF0000);
             }
         }
     }
+    
 
 
     private isTerritoryOccupied(x: number, y: number, gameManager: GameManager): boolean {
