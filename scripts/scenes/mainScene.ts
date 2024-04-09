@@ -124,9 +124,18 @@ export default class MainScene extends Phaser.Scene {
         });
 
         
-        
+        // Update enemy territories
+    this.enemyTerritories = this.getGameManager().getEnemyTerritories();
+    this.displayEnemyTerritories();
     }
-
+    private displayEnemyTerritories(): void {
+        // Loop through enemy territories and display them on the grid
+        this.enemyTerritories.forEach(territory => {
+            const enemyBox = this.createNineSlice2(territory.x * this.cellSize + this.cellSize / 2, territory.y * this.cellSize + this.cellSize / 2,
+                this.cellSize, this.cellSize, 20, 20, 20, 20);
+            enemyBox.setTint(0xFF0000);
+        });
+    }
     private getCoinBoostFactor(): number {
         const gameManager: GameManager = this.getGameManager();
         const currentWeapon = gameManager.getCurrentWeapon();
@@ -219,7 +228,31 @@ export default class MainScene extends Phaser.Scene {
         this.territoriesText.setText(`Territories Owned: ${gameManager.ownedTerritories.length}`);
         this.playerNameText.setText(`Player Name: ${this.registry.get('username')}`);
     }
+    // Define a function to generate the updated grid state
+private generateGridState(): { x: number, y: number }[] {
+    const gameManager: GameManager = this.getGameManager();
+    const gridState: { x: number, y: number }[] = [];
 
+    // Add player-owned territories to the grid state
+    gameManager.ownedTerritories.forEach(territory => {
+        gridState.push({ x: territory.x, y: territory.y });
+    });
+
+    // Add enemy territories to the grid state
+    this.enemyTerritories.forEach(territory => {
+        gridState.push({ x: territory.x, y: territory.y });
+    });
+
+    // Return the generated grid state
+    return gridState;
+}
+
+// Update grid state whenever changes occur
+    private updateGridState(): void {
+        const gameManager: GameManager = this.getGameManager();
+        const gridState = this.generateGridState();
+        gameManager.updateGridState(gridState);
+    }
     private triggerEnemyAttack(): void {
         this.enemyAttackTriggered = true;
         this.generateInitialEnemy(); // Make sure this method properly adds the first enemy territory
@@ -266,7 +299,7 @@ export default class MainScene extends Phaser.Scene {
         for (let y = 0; y < this.gridHeight; y++) {
             for (let x = 0; x < this.gridWidth; x++) {
                 let color = 0xCCCCCC;
-                if (gm.country?.x == x && gm.country?.y == y) {
+                if (this.isTerritoryOwned(x, y, gm)){//gm.country?.x == x && gm.country?.y == y) {
                     const cell = this.add.rectangle(
                         x * this.cellSize + this.cellSize / 2,
                         y * this.cellSize + this.cellSize / 2,

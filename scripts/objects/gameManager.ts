@@ -22,5 +22,28 @@ export default class GameManager { // Global game state synced across all player
     getCurrentWeapon(): { name: string; imageKey: string; } | null {
         return this.currentWeapon;
     }
-    // other properties and methods...
+    private gridState: { x: number, y: number }[] = [];
+
+    // Method to update the grid state
+    public updateGridState(newGridState: { x: number, y: number }[]): void {
+        this.gridState = newGridState;
+    }
+
+    // Method to get the grid state
+    public getGridState(): { x: number, y: number }[] {
+        return this.gridState;
+    }
+
+    // Store enemy territories
+    private enemyTerritories: { x: number, y: number }[] = [];
+
+    // Method to get enemy territories
+    public getEnemyTerritories(): { x: number, y: number }[] {
+        return this.enemyTerritories;
+    }
+
+    // Method to update enemy territories
+    public setEnemyTerritories(territories: { x: number, y: number }[]): void {
+        this.enemyTerritories = territories;
+    }
 }
