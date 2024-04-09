@@ -29,7 +29,7 @@ export default class InventoryScene extends Phaser.Scene {
         nfts.forEach(nft => {
             this.load.image(nft.name, nft.image);
         });
-        this.load.image('map', 'assets/img/UIBackground.jpg'); 
+        this.load.image('map1', 'assets/img/UIBackground.jpg'); 
 
     }
 
@@ -56,9 +56,8 @@ export default class InventoryScene extends Phaser.Scene {
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, gradientTexture.width, gradientTexture.height); 
         gradientTexture.refresh(); 
-        const gradientRect = this.add.sprite(0, 0-10, 'gradientTexture'); 
     //   gradientRect.postFX.addShine();
-    const waterIcon = this.add.image(650, 370, 'map').setOrigin(0.5, 0.5).setDisplaySize(1300, 740).setData('persistent', true); 
+    const waterIcon = this.add.image(650, 370, 'map1').setOrigin(0.5, 0.5).setDisplaySize(1300, 740).setData('persistent', true); 
 
     }
         // Create and position the title
@@ -120,7 +119,8 @@ export default class InventoryScene extends Phaser.Scene {
             padding: { x: 10, y: 5 },
             fontFamily: 'Garamond' // You can specify your desired font family here
         };
-    
+        const waterIcon = this.add.image(650, 370, 'map1').setOrigin(0.5, 0.5).setDisplaySize(1300, 740).setData('persistent', true); 
+
         // Remove previous inventory cards and dropdowns
         this.children.each(child => {
             if (child.type === 'Image' || child.type === 'Text') {
